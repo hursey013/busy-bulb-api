@@ -1,6 +1,5 @@
+// Init Firebase
 const functions = require("firebase-functions");
-const express = require("express");
-
 const admin = require("firebase-admin");
 admin.initializeApp();
 
@@ -8,7 +7,15 @@ admin.initializeApp();
 const db = admin.database();
 const ref = db.ref("users");
 
+// Init Express
+const express = require("express");
+const basicAuth = require("express-basic-auth");
 const app = express();
+app.use(
+  basicAuth({
+    users: { admin: functions.config().user.password }
+  })
+);
 
 app.get("/", async (req, res) => {
   const data = await ref.once("value");
